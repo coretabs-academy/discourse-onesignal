@@ -18,15 +18,9 @@ after_initialize do
           Rails.logger.warn('OneSignal REST API Key is missing')
           return
       end
-
-      clients = user.user_api_keys
-          .where("('push' = ANY(scopes) OR 'notifications' = ANY(scopes)) AND push_url IS NOT NULL AND position(push_url in ?) > 0 AND revoked_at IS NULL",
-                    ONESIGNALAPI)
-          .pluck(:client_id, :push_url)
-
-      if clients.length > 0
-        Jobs.enqueue(:onesignal_pushnotification, clients: clients, payload: payload, username: user.username)
-      end
+      
+      
+      Jobs.enqueue(:onesignal_pushnotification, payload: payload, username: user.username)
 
     end
 
